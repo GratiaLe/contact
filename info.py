@@ -47,5 +47,5 @@ def menu():
         else:
             print("Invalid choice, try again.")
 
-# call menu function
+# call menu function, run program
 menu()
