@@ -18,8 +18,6 @@ def print_all_contact():
 
     db.close()
 
-print_all_contact()
-
 
 def menu():
     while True:
@@ -48,3 +46,6 @@ def menu():
             break
         else:
             print("Invalid choice, try again.")
+
+# call menu function
+menu()
