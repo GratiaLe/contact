@@ -22,7 +22,11 @@ def print_people_address():
     for row in results:
         print(row)
 
+    for id, first_name, last_name, number, street, suburb in results:
+        print(f"{id} {first_name}, {last_name}, {number}, {street}, {suburb}")
+
     db.close()
 
 
 print_people_address()
+
