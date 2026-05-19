@@ -42,4 +42,4 @@ def search_for_person():
     FROM person
     JOIN address on person.id = address.address_id;
     WHERE person.first_name LIKE ? OR person.last_name LIKE ?
-    ''', (f"%{name}%, f"%{name}%""))
+    ''', (f"%{name}%, f"%{name}%"))
