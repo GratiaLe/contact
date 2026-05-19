@@ -30,16 +30,15 @@ print_people_address()
 
 # function to print all contacts
 def search_for_person():
-
     name = input("Enter first or last name: ")
 
-    db = connect()
+    db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-    
+
     cursor.execute('''
-    SELECT person.first_name, person.last_name, person.phone_number, address.number, 
-            address.street, address.suburb
+    SELECT person.first_name, person.last_name, person.phone_number,
+           address.number, address.street, address.suburb
     FROM person
-    JOIN address on person.id = address.address_id;
+    JOIN address ON person.id = address.address_id
     WHERE person.first_name LIKE ? OR person.last_name LIKE ?
-    ''', (f"%{name}%, f"%{name}%"))
+    ''', (f"%{name}%", f"%{name}%"))
