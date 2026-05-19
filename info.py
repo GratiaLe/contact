@@ -10,7 +10,7 @@ def print_people_address():
     cursor = db.cursor()
 
     sql = """
-    SELECT person.id, person.first_name, person.last_name,
+    SELECT person.id, person.first_name, person.last_name, phone_number,
     address.number, address.street, address.suburb
     FROM person
     JOIN address ON person.id = address.address_id;
@@ -19,6 +19,7 @@ def print_people_address():
     cursor.execute(sql)
     results = cursor.fetchall()
 
+    print(results)
 
     for first_name, last_name, phone_number, address_id, number, street, suburb in results:
         print(f"{first_name} {last_name}, {phone_number} {address_id}, {number} {street}, {suburb}")
@@ -42,3 +43,5 @@ def search_for_person():
     JOIN address ON person.id = address.address_id
     WHERE person.first_name LIKE ? OR person.last_name LIKE ?
     ''', (f"%{name}%", f"%{name}%"))
+
+search_for_person()
