@@ -19,14 +19,10 @@ def print_people_address():
     cursor.execute(sql)
     results = cursor.fetchall()
 
-    for row in results:
-        print(row)
-
-    for id, first_name, last_name, number, street, suburb in results:
-        print(f"{id} {first_name}, {last_name}, {number}, {street}, {suburb}")
+    for id, first_name, last_name, address_id, number, street, suburb in results:
+        print(f"{id} {first_name}, {last_name}, {address_id}, {number}, {street}, {suburb}")
 
     db.close()
 
 
 print_people_address()
-
