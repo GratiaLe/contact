@@ -72,7 +72,6 @@ def search_for_person():
 
     db.close()
 
-search_for_person()
 
 # function to update phone number
 def update_phone():
@@ -120,8 +119,41 @@ def sort_contact():
     print("ID  |      Name     | Phone Number | Address")  
     print("-" * 70)
 
+    for row in results:
+        print(f"{row[0]}   |   {row[1]} {row[2]}   |   {row[3]}    | {row[4]} {row[5]} {row[6]}")
+
+    db.close()
+
+# function to filter by suburb
+def filter_by_suburb():
+    suburb = input("Enter suburb: ")
+
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+
+    cursor.execute('''
+    SELECT  person.id,
+            person.first_name,
+            person.last_name,
+            person.phone_number,
+            address.number,
+            address.street,
+            address.suburb
+    FROM person
+    JOIN address ON person.id = address.address_id
+    WHERE address.suburb LIKE ?''', (f"%{suburb}%",))
+
+    results = cursor.fetchall()
+
+    print("\n---FILTER RESULTS---")
+
+    # column headings
+    print("ID  |      Name     | Phone Number | Address")  
+    print("-" * 70)
 
     for row in results:
         print(f"{row[0]}   |   {row[1]} {row[2]}   |   {row[3]}    | {row[4]} {row[5]} {row[6]}")
 
     db.close()
+
+filter_by_suburb()
