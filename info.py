@@ -39,12 +39,12 @@ def search_for_person():
     elif len(name) < 3:
         print("Error: Name must be at least 3 characters.")
         return
-    
+
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
 
     cursor.execute('''
-    SELECT  person.id
+    SELECT  person.id,
             person.first_name,
             person.last_name,
             person.phone_number,
@@ -64,8 +64,13 @@ def search_for_person():
         db.close()
         return
 
+    # column headings
+    print("ID  |      Name     | Phone Number | Address")  
+    print("-" * 68)
+
+
     for row in results:
-        print(f"{row[0]}   |   {row[1]} {row[2]}   | {row[3]}, {row[4]} {row[5]} {row[6]}")
+        print(f"{row[0]}   |   {row[1]} {row[2]}   |   {row[3]}    | {row[4]} {row[5]} {row[6]}")
 
     db.close()
 
