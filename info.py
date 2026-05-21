@@ -156,4 +156,18 @@ def filter_by_suburb():
 
     db.close()
 
-filter_by_suburb()
+
+# function to define/create menu
+def menu():
+    while True:
+        print("\n---CONTACT DATABASE MENU---")
+        print("1. View all contacts")
+        print("2. Search for person")
+        print("3. Update phone number")
+        print("4. Sort contacts A-Z")
+        print("5. Filter by suburb")
+        print("6. Exit")
+
+
+
+
