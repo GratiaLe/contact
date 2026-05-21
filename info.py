@@ -175,9 +175,9 @@ def menu():
         if choice == "2":
             search_for_person()
         if choice == "3":
-            update_phone_number()
+            update_phone()
         if choice == "4":
-            sort_contacts()
+            sort_contact()
         if choice == "5":
             filter_by_suburb():
         if choice == "6":
