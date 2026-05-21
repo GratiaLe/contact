@@ -168,6 +168,20 @@ def menu():
         print("5. Filter by suburb")
         print("6. Exit")
 
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+            print_people_address()
+        if choice == "2":
+            search_for_person()
+        if choice == "3":
+            update_phone_number()
+        if choice == "4":
+            sort_contacts()
+        if choice == "5":
+            filter_by_suburb():
+        if choice == "6":
+
 
 
 
