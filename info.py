@@ -25,8 +25,6 @@ def print_people_address():
     db.close()
 
 
-print_people_address()
-
 # function to print all contacts
 def search_for_person():
 # ask user for person's foirst or last name
@@ -66,7 +64,7 @@ def search_for_person():
 
     # column headings
     print("ID  |      Name     | Phone Number | Address")  
-    print("-" * 68)
+    print("-" * 70)
 
 
     for row in results:
@@ -75,7 +73,6 @@ def search_for_person():
     db.close()
 
 search_for_person()
-
 
 # function to update phone number
 def update_phone():
@@ -95,3 +92,36 @@ def update_phone():
     db.close()
 
     print("Phone number updated.")
+
+    update_phone()
+
+# function to sort contact information from A-Z
+def sort_contact():
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+
+    cursor.execute('''
+        SELECT  person.id,
+            person.first_name,
+            person.last_name,
+            person.phone_number,
+            address.address_id,
+            address.number,
+            address.street,
+            address.suburb
+        FROM person
+        JOIN address ON person.id = address.address_id''')
+
+    results = cursor.fetchall()
+
+    print("\n ---SORTED CONTACTS (A-Z)---")
+
+    # column headings
+    print("ID  |      Name     | Phone Number | Address")  
+    print("-" * 70)
+
+
+    for row in results:
+        print(f"{row[0]}   |   {row[1]} {row[2]}   |   {row[3]}    | {row[4]} {row[5]} {row[6]}")
+
+    db.close()
