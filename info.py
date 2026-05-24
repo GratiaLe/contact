@@ -24,6 +24,8 @@ def print_people_address():
 
     db.close()
 
+# create variable for lowest amount of chararacters in first and last names in database/person table
+lowest_name_character = 3
 
 # function to print all contacts
 def search_for_person():
@@ -34,7 +36,7 @@ def search_for_person():
         print("Error: You must enter a name.")
         return
 # Amy is the shortest name in the person table (3 letters)
-    elif len(name) < 3:
+    elif len(name) < lowest_name_character:
         print("Error: Name must be at least 3 characters.")
         return
 
@@ -75,16 +77,16 @@ def search_for_person():
 
 # function to update phone number
 def update_phone():
-    contact_id = input("Enter contact ID to update.")
-    new_phone = input("Enter a new phone number.")
+    contact_id = input("Enter contact ID to update. ").strip
+    new_phone = input("Enter a new phone number. ").strip
 
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
 
     cursor.execute('''
-    UPDATE contact
+    UPDATE person
     SET phone_number = ?
-    WHERE contact_id = ?
+    WHERE id = ?
     ''', (new_phone, contact_id))
 
     db.commit
@@ -172,16 +174,18 @@ def menu():
 
         if choice == "1":
             print_people_address()
-        if choice == "2":
+        elif choice == "2":
             search_for_person()
-        if choice == "3":
+        elif choice == "3":
             update_phone()
-        if choice == "4":
+        elif choice == "4":
             sort_contact()
-        if choice == "5":
-            filter_by_suburb():
-        if choice == "6":
+        elif choice == "5":
+            filter_by_suburb()
+        elif choice == "6":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice, try again.")
 
-
-
-
+menu()
