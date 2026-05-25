@@ -1,100 +1,155 @@
 
 import sqlite3
 
-DATABASE = 'contact.db'
+# constants, so no magic numbers por repetitive code
+DATABASE = "contact.db"
+MIN_NAME_LENGTH = 3
+MAX_NAME_LENGTH = 10
+LINE_WIDTH = 70
+MENU_EXIT_OPTION = "6"
 
-
-# function to print all contacts, and join the person adn address tables
-def print_people_address():
+# resuable database connect fucntion, so conveneint
+def connect_database():
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
+    return db, cursor
 
-    sql = """
-    SELECT person.id, person.first_name, person.last_name, phone_number,
-    address.number, address.street, address.suburb
+# reusable heading function to avoid repeated code, so convenient
+def print_heading():
+    print("ID | Name                 | Phone Number | Address")
+    print("-" * LINE_WIDTH)
+
+
+# ================= VIEW CONTACTS =================
+# function to print all contacts and addresses, adn join tables
+def print_people_address():
+
+    db, cursor = connect_database()
+
+    sql = ("""
+    SELECT person.id,
+           person.first_name,
+           person.last_name,
+           person.phone_number,
+           address.number,
+           address.street,
+           address.suburb
     FROM person
-    JOIN address ON person.id = address.address_id;
-    """
+    JOIN address ON person.id = address.address_id
+    ORDER BY person.last_name ASC;
+    """)
 
     cursor.execute(sql)
     results = cursor.fetchall()
 
-    for first_name, last_name, phone_number, address_id, number, street, suburb in results:
-        print(f"{first_name} {last_name}, {phone_number} {address_id}, {number} {street}, {suburb}")
+    print("\n--- ALL CONTACTS ---")
+
+    print_heading()
+
+    for person_id, first_name, last_name, phone_number, number, street, suburb in results:
+
+# clear formatting
+        print(f"{person_id:<3} | "
+              f"{first_name} {last_name:<18} | "
+              f"{phone_number:<12} | "
+              f"{number} {street}, {suburb}")
 
     db.close()
 
-# create variable for lowest amount of chararacters in first and last names in database/person table
-lowest_name_character = 3
 
-# function to print all contacts
+
+# ================= SEARCH FUNCTION =================
+# function to search for a person
 def search_for_person():
-# ask user for person's foirst or last name
+
+    # CHANGED: .strip() removes accidental spaces
     name = input("Enter first or last name: ").strip()
-# accepts error values
+
+    # invalid input handling
     if name == "":
         print("Error: You must enter a name.")
         return
-# Amy is the shortest name in the person table (3 letters)
-    elif len(name) < lowest_name_character:
-        print("Error: Name must be at least 3 characters.")
+
+    # CHANGED: uses constant instead of magic number
+    elif len(name) < MIN_NAME_LENGTH:
+        print(f"Error: Name must be at least {MIN_NAME_LENGTH} characters.")
         return
 
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
+    db, cursor = connect_database()
 
     cursor.execute('''
-    SELECT  person.id,
-            person.first_name,
-            person.last_name,
-            person.phone_number,
-            address.number,
-            address.street,
-            address.suburb
+    SELECT person.id,
+           person.first_name,
+           person.last_name,
+           person.phone_number,
+           address.number,
+           address.street,
+           address.suburb
     FROM person
     JOIN address ON person.id = address.address_id
-    WHERE person.first_name LIKE ? OR person.last_name LIKE ?
+    WHERE person.first_name LIKE ?
+       OR person.last_name LIKE ?
     ''', (f"%{name}%", f"%{name}%"))
 
     results = cursor.fetchall()
-    print("\n---SEARCH RESULTS---")
+
+    print("\n--- SEARCH RESULTS ---")
 
     if not results:
         print("That person was not found.")
         db.close()
         return
 
-    # column headings
-    print("ID  |      Name     | Phone Number | Address")  
-    print("-" * 70)
-
+    print_heading()
 
     for row in results:
-        print(f"{row[0]}   |   {row[1]} {row[2]}   |   {row[3]}    | {row[4]} {row[5]} {row[6]}")
+
+        # CHANGED: cleaner formatting
+        print(f"{row[0]:<3} | "
+              f"{row[1]} {row[2]:<18} | "
+              f"{row[3]:<12} | "
+              f"{row[4]} {row[5]}, {row[6]}")
 
     db.close()
 
-
-# function to update phone number
+# ================= UPDATE PHONE =================
+# function to update a phone number
 def update_phone():
-    contact_id = input("Enter contact ID to update. ").strip
-    new_phone = input("Enter a new phone number. ").strip
 
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
+    # CHANGED: handles invalid number input
+    try:
+        contact_id = int(input("Enter contact ID to update: "))
 
+    except ValueError:
+        print("Error: ID must be a number.")
+        return
+
+    new_phone = input("Enter a new phone number: ").strip()
+
+    # CHANGED: invalid blank input handling
+    if new_phone == "":
+        print("Error: Phone number cannot be blank.")
+        return
+
+    db, cursor = connect_database()
+
+    # CHANGED: fixed table and column names
     cursor.execute('''
     UPDATE person
     SET phone_number = ?
     WHERE id = ?
     ''', (new_phone, contact_id))
 
-    db.commit
+    # CHANGED: checks if ID exists
+    if cursor.rowcount == 0:
+        print("Error: Contact ID not found.")
+
+    else:
+        # CHANGED: fixed commit()
+        db.commit()
+        print("Phone number updated.")
+
     db.close()
-
-    print("Phone number updated.")
-
-    update_phone()
 
 # function to sort contact information from A-Z
 def sort_contact():
@@ -182,7 +237,7 @@ def menu():
             sort_contact()
         elif choice == "5":
             filter_by_suburb()
-        elif choice == "6":
+        elif choice == MENU_EXIT_OPTION:
             print("Goodbye!")
             break
         else:
