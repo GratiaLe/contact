@@ -3,9 +3,9 @@ import sqlite3
 
 # constants, so no magic numbers por repetitive code
 DATABASE = "contact.db"
-MIN_NAME_LENGTH = 2
+MIN_NAME_LENGTH = 1
 MAX_NAME_LENGTH = 10
-LINE_WIDTH = 70
+LINE_WIDTH = 75
 MENU_EXIT_OPTION = "6"
 
 # resuable database connect fucntion, so conveneint
