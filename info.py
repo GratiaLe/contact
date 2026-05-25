@@ -3,7 +3,7 @@ import sqlite3
 
 # constants, so no magic numbers por repetitive code
 DATABASE = "contact.db"
-MIN_NAME_LENGTH = 3
+MIN_NAME_LENGTH = 2
 MAX_NAME_LENGTH = 10
 LINE_WIDTH = 70
 MENU_EXIT_OPTION = "6"
@@ -49,6 +49,9 @@ def print_people_address():
     for person_id, first_name, last_name, phone_number, number, street, suburb in results:
 
 # clear formatting
+#colon(:) separates variable name from formatting rule
+# < pushes data to left, with empty spaces on the right
+# intger following < symbol is how many spaces the variable is allowed
         print(f"{person_id:<3} | "
               f"{first_name} {last_name:<18} | "
               f"{phone_number:<12} | "
@@ -62,7 +65,7 @@ def print_people_address():
 # function to search for a person
 def search_for_person():
 
- # .strip() removes accidental spaces
+# .strip() removes accidental spaces
     name = input("Enter first or last name: ").strip()
 
 # Invalid input handling
@@ -70,7 +73,7 @@ def search_for_person():
         print("Error: You must enter a name.")
         return
 
- # Uses constant instead of magic number
+#Uses constant instead of magic number
     elif len(name) < MIN_NAME_LENGTH:
         print(f"Error: Name must be at least {MIN_NAME_LENGTH} characters.")
         return
@@ -173,7 +176,7 @@ def sort_contact():
 
     print("\n--- SORTED CONTACTS (A-Z) ---")
 
-# call functoin for headings
+# call function for headings
     print_heading()
 
     for row in results:
