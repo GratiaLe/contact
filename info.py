@@ -62,15 +62,15 @@ def print_people_address():
 # function to search for a person
 def search_for_person():
 
-    # CHANGED: .strip() removes accidental spaces
+ # .strip() removes accidental spaces
     name = input("Enter first or last name: ").strip()
 
-    # invalid input handling
+# Invalid input handling
     if name == "":
         print("Error: You must enter a name.")
         return
 
-    # CHANGED: uses constant instead of magic number
+ # Uses constant instead of magic number
     elif len(name) < MIN_NAME_LENGTH:
         print(f"Error: Name must be at least {MIN_NAME_LENGTH} characters.")
         return
@@ -104,7 +104,7 @@ def search_for_person():
 
     for row in results:
 
-        # CHANGED: cleaner formatting
+    # clean formatting
         print(f"{row[0]:<3} | "
               f"{row[1]} {row[2]:<18} | "
               f"{row[3]:<12} | "
@@ -116,7 +116,7 @@ def search_for_person():
 # function to update a phone number
 def update_phone():
 
-    # CHANGED: handles invalid number input
+# code accepts all input, handles invalid inputs and unexpected user inputs
     try:
         contact_id = int(input("Enter contact ID to update: "))
 
@@ -126,90 +126,114 @@ def update_phone():
 
     new_phone = input("Enter a new phone number: ").strip()
 
-    # CHANGED: invalid blank input handling
+
     if new_phone == "":
         print("Error: Phone number cannot be blank.")
         return
 
     db, cursor = connect_database()
 
-    # CHANGED: fixed table and column names
     cursor.execute('''
     UPDATE person
     SET phone_number = ?
     WHERE id = ?
     ''', (new_phone, contact_id))
 
-    # CHANGED: checks if ID exists
+# checks if ID exists
     if cursor.rowcount == 0:
         print("Error: Contact ID not found.")
 
     else:
-        # CHANGED: fixed commit()
         db.commit()
         print("Phone number updated.")
 
     db.close()
 
+# ================= SORT CONTACTS =================
 # function to sort contact information from A-Z
 def sort_contact():
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
+
+    db, cursor = connect_database()
 
     cursor.execute('''
-        SELECT  person.id,
-            person.first_name,
-            person.last_name,
-            person.phone_number,
-            address.address_id,
-            address.number,
-            address.street,
-            address.suburb
-        FROM person
-        JOIN address ON person.id = address.address_id''')
+    SELECT person.id,
+           person.first_name,
+           person.last_name,
+           person.phone_number,
+           address.number,
+           address.street,
+           address.suburb
+    FROM person
+    JOIN address ON person.id = address.address_id
+    ORDER BY person.last_name ASC,
+             person.first_name ASC
+    ''')
 
     results = cursor.fetchall()
 
-    print("\n ---SORTED CONTACTS (A-Z)---")
+    print("\n--- SORTED CONTACTS (A-Z) ---")
 
-    # column headings
-    print("ID  |      Name     | Phone Number | Address")  
-    print("-" * 70)
+# call functoin for headings
+    print_heading()
 
     for row in results:
-        print(f"{row[0]}   |   {row[1]} {row[2]}   |   {row[3]}    | {row[4]} {row[5]} {row[6]}")
+
+ # clear formatting
+        print(f"{row[0]:<3} | "
+              f"{row[1]} {row[2]:<18} | "
+              f"{row[3]:<12} | "
+              f"{row[4]} {row[5]}, {row[6]}")
 
     db.close()
 
-# function to filter by suburb
-def filter_by_suburb():
-    suburb = input("Enter suburb: ")
 
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
+# ================= FILTER BY SUBURB =================
+# function to filter contacts by suburb
+def filter_by_suburb():
+
+    suburb = input("Enter suburb: ").strip()
+
+# Invalid input handling
+    if suburb == "":
+        print("Error: Suburb cannot be blank.")
+        return
+
+    db, cursor = connect_database()
 
     cursor.execute('''
-    SELECT  person.id,
-            person.first_name,
-            person.last_name,
-            person.phone_number,
-            address.number,
-            address.street,
-            address.suburb
+    SELECT person.id,
+           person.first_name,
+           person.last_name,
+           person.phone_number,
+           address.number,
+           address.street,
+           address.suburb
     FROM person
     JOIN address ON person.id = address.address_id
-    WHERE address.suburb LIKE ?''', (f"%{suburb}%",))
+    WHERE address.suburb LIKE ?
+    ORDER BY person.last_name ASC
+    ''', (f"%{suburb}%",))
 
     results = cursor.fetchall()
 
-    print("\n---FILTER RESULTS---")
+    print("\n--- FILTER RESULTS ---")
 
-    # column headings
-    print("ID  |      Name     | Phone Number | Address")  
-    print("-" * 70)
+    # checks if no results found
+    if not results:
+        print("No contacts found in that suburb.")
+        db.close()
+        return
+
+    # reusable headings
+    print_heading()
 
     for row in results:
-        print(f"{row[0]}   |   {row[1]} {row[2]}   |   {row[3]}    | {row[4]} {row[5]} {row[6]}")
+
+        # cleaner formatting
+        print(f"{row[0]:<3} | "
+              f"{row[1]} {row[2]:<18} | "
+              f"{row[3]:<12} | "
+              f"{row[4]} {row[5]}, {row[6]}")
 
     db.close()
 
