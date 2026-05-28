@@ -185,7 +185,7 @@ def sort_contact():
         print(f"{row[0]:<3} | "
               f"{row[1]} {row[2]:<18} | "
               f"{row[3]:<12} | "
-              f"{row[4]} {row[5]}, {row[6]}")
+              f"{row[4]} {row[5]}, {row[6]} {row[7]}")
 
     db.close()
 
